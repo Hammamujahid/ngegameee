@@ -42,7 +42,7 @@ export default async function Index() {
   </div>
   <div className="flex items-center gap-4">
     <div className="flex items-center justify-between w-full max-w-4xl p-3 text-sm">
-          {isSupabaseConnected && <AuthButton />}
+           <AuthButton />
         </div>
   </div>
 </header>
