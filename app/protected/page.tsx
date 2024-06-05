@@ -49,20 +49,6 @@ export default async function ProtectedPage() {
     <div className="flex flex-col min-h-screen">
       <header className="flex items-center justify-between px-6 py-4 text-white bg-gray-900 shadow-md">
         <a className="flex items-center gap-2" href="#">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="w-6 h-6"
-          >
-            <path d="m8 3 4 8 5-5 5 15H2L8 3z"></path>
-          </svg>
           <span className="text-lg font-semibold">NgeGameee</span>
         </a>
         <div className="flex items-center gap-4">

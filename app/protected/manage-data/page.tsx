@@ -67,20 +67,6 @@ export default function ManageDataPage() {
     <div className="flex flex-col w-screen min-h-screen">
       <header className="flex items-center justify-between w-full px-6 py-4 text-white bg-gray-900 shadow-md">
         <a className="flex items-center gap-2" href="#">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="w-6 h-6"
-          >
-            <path d="m8 3 4 8 5-5 5 15H2L8 3z"></path>
-          </svg>
           <span className="text-lg font-semibold">NgeGameee</span>
         </a>
       </header>
@@ -97,25 +83,27 @@ export default function ManageDataPage() {
               </tr>
             </thead>
             <tbody>
-              {games.map((game) => (
-                <tr key={game.id}>
-                  {Object.values(game).map((value, index) => (
-                    <td key={index} className="px-4 py-2 border">{formatValue(value)}</td>
-                  ))}
-                  <td className="flex gap-4 px-4 justify-items-center">
-                    <Link href={`/protected/manage-data/form-update/${game.id}`}>
-                      <button className="px-3 py-1 text-white bg-yellow-500 rounded hover:bg-yellow-700">Update</button>
-                    </Link>
-                    <button
-                      onClick={() => handleDelete(game.id)}
-                      className="px-3 py-1 text-white bg-red-500 rounded hover:bg-red-700"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+  {games.map((game) => (
+    <tr key={game.id}>
+      {Object.entries(game).map(([key, value], index) => (
+        <td key={index} className="px-4 py-2 border">
+          {typeof value === 'string' && value.length > 50 ? `${value.slice(0, 50)}...` : value}
+        </td>
+      ))}
+      <td className="flex items-center justify-center gap-4 px-4">
+  <Link href={`/protected/manage-data/form-update/${game.id}`}>
+    <button className="px-3 py-1 text-white bg-yellow-500 rounded hover:bg-yellow-700">Update</button>
+  </Link>
+  <button
+    onClick={() => handleDelete(game.id)}
+    className="px-3 py-1 text-white bg-red-500 rounded hover:bg-red-700"
+  >
+    Delete
+  </button>
+</td>
+    </tr>
+  ))}
+</tbody>
           </table>
         </div>
         <div className="flex justify-end w-full gap-4 mt-6">
