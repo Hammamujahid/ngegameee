@@ -10,8 +10,6 @@ type Game = {
   title: string;
   description: string;
   image_logo: string;
-  image_thumbnail: string;
-  min_req: string;
   size: number;
   release_year: string;  // treat as string for simplicity
   download_url: string;
@@ -26,13 +24,12 @@ export default function UpdateGamePage({ params }: { params: { id: string } }) {
     title: '',
     description: '',
     image_logo: '',
-    image_thumbnail: '',
-    min_req: '',
     size: 0,
     release_year: '',
     download_url: '',
   });
   const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false); // State for tracking update process
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -64,8 +61,10 @@ export default function UpdateGamePage({ params }: { params: { id: string } }) {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setUpdating(true); // Start updating
     const supabase = createClient();
     const { error } = await supabase.from('game').update(formData).eq('id', id);
+    setUpdating(false); // End updating
 
     if (error) {
       setError(error.message);
@@ -83,11 +82,16 @@ export default function UpdateGamePage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="flex flex-col items-center min-w-full p-6 bg-gray-900">
+    <div className="relative flex flex-col items-center min-w-full p-6 bg-gray-900">
+      {updating && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
+          <div className="w-16 h-16 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
+        </div>
+      )}
       <h1 className="mb-4 text-2xl font-semibold">Update Game</h1>
       <form onSubmit={handleSubmit} className="w-full max-w-lg">
         <div className="flex flex-wrap mb-6 -mx-3">
-          {['title', 'description', 'image_logo', 'image_thumbnail', 'min_req', 'size', 'release_year', 'download_url'].map((field) => (
+          {['title', 'description', 'image_logo', 'size', 'release_year', 'download_url'].map((field) => (
             <div key={field} className="w-full px-3 mb-6 md:mb-0">
               <label className="block mb-2 text-xs font-bold tracking-wide text-gray-700 uppercase" htmlFor={field}>
                 {field.replace('_', ' ')}
@@ -105,7 +109,7 @@ export default function UpdateGamePage({ params }: { params: { id: string } }) {
           ))}
         </div>
         <div className="flex items-center justify-between">
-        <Link href="/protected/manage-data/">
+          <Link href="/protected/manage-data/">
             <div className="px-4 py-2 mt-2 font-bold text-black bg-white rounded hover:bg-gray-400 focus:outline-none focus:shadow-outline">
               Back
             </div>
@@ -113,6 +117,7 @@ export default function UpdateGamePage({ params }: { params: { id: string } }) {
           <button
             className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
             type="submit"
+            disabled={updating} // Disable button while updating
           >
             Submit
           </button>

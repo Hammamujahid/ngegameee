@@ -1,5 +1,7 @@
+"use client";
+
 import AuthButton from "@/components/AuthButton";
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/utils/supabase/client";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
@@ -9,8 +11,6 @@ type Game = {
   title: string;
   description: string;
   image_logo: string;
-  image_thumbnail: string;
-  min_req: string;
   size: number;
   release_year: string; // treat as string for simplicity
   download_url: string;
@@ -27,11 +27,10 @@ export default async function ProtectedPage() {
   // Redirect ke halaman login jika pengguna belum login
   if (!user) {
     redirect("/login");
-    return null;
   }
 
   // Ambil data game dari Supabase
-  const { data: games, error } = await supabase.from('game').select('*');
+  const { data: games, error } = await supabase.from("game").select("*");
   if (error) {
     console.error("Error fetching data:", error.message);
     return <div>Error fetching data</div>;
@@ -47,10 +46,10 @@ export default async function ProtectedPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="flex items-center justify-between px-6 py-4 text-white bg-gray-900 shadow-md">
-        <a className="flex items-center gap-2" href="#">
+      <header className="fixed flex items-center justify-between w-screen px-6 py-4 text-white shadow-md bg-gray-950">
+        <div className="flex items-center gap-2">
           <span className="text-lg font-semibold">NgeGameee</span>
-        </a>
+        </div>
         <div className="flex items-center gap-4">
           <div className="w-full">
             <nav className="flex justify-center w-full h-16">
@@ -61,32 +60,64 @@ export default async function ProtectedPage() {
           </div>
         </div>
       </header>
-      <main className="flex flex-1 bg-gray-100 dark:bg-gray-800">
-        <div className="w-3/4">
+      <main className="flex flex-1 mt-24 bg-gray-100 dark:bg-gray-800">
+        <div className="fixed w-1/5 h-screen px-6 bg-gray-950">
+          <div className="w-48 mt-2 ">
+            <ul className="py-1">
+              <li>
+                <Link
+                  href="/protected"
+                  className="block px-4 py-2 text-white hover:bg-gray-900"
+                >
+                  Dashboard
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/protected/manage-data"
+                  className="block px-4 py-2 text-white hover:bg-gray-900"
+                >
+                  Manage Data
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="w-1/5"></div>
+        <div className="flex flex-col w-4/5 px-8">
+          <div className="flex justify-center w-full pb-10 mt-10">
+            <div className="flex flex-col border border-gray-900 rounded-lg h-36 w-36 solid">
+              <div className="flex items-center justify-center bg-gray-900 h-1/3">
+                Total Game
+              </div>
+              <div className="flex items-center justify-center text-4xl h-2/3">
+              {games.length}
+              </div>
+            </div>
+          </div>
           {games?.map((game) => (
-            <div key={game.id} className="my-8 ml-4 border rounded-lg shadow-sm bg-card text-card-foreground" data-v0-t="card">
+            <div
+              key={game.id}
+              className="my-2 ml-4 border rounded-lg shadow-sm bg-card text-card-foreground"
+              data-v0-t="card"
+            >
               <div className="flex items-center">
                 <div className="p-4 w-80">
-                  <img src={game.image_logo} alt="Logo"/>
+                  <img src={game.image_logo} alt="Logo" />
                 </div>
                 <div className="flex-col pr-4">
                   <h3 className="text-xl">{game.title}</h3>
                   <p>{game.release_year}</p>
-                  <p className="text-xs">{truncateDescription(game.description, 250)}</p>
+                  <p className="text-xs">
+                    {truncateDescription(game.description, 250)}
+                  </p>
                 </div>
               </div>
             </div>
           ))}
         </div>
-        <div className="w-1/4 px-24">
-          <Link href="/protected/manage-data">
-            <div className="flex justify-center px-4 py-2 mt-10 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline">
-              Add Game
-            </div>
-          </Link>
-        </div>
       </main>
-      <footer className="flex justify-center w-full p-8 mt-auto text-xs text-center bg-gray-900 border-t border-t-foreground/10">
+      <footer className="flex justify-center w-full p-8 mt-auto text-xs text-center border-t bg-gray-950 border-t-foreground/10">
         <p>
           Created by{" "}
           <a

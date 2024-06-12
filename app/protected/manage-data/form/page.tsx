@@ -7,8 +7,6 @@ type FormData = {
   title: string;
   description: string;
   image_logo: string;
-  image_thumbnail: string;
-  min_req: string;
   size: string;
   release_year: string;
   download_url: string;
@@ -19,13 +17,12 @@ export default function CreateGamePage() {
     title: '',
     description: '',
     image_logo: '',
-    image_thumbnail: '',
-    min_req: '',
     size: '',
     release_year: '',
     download_url: ''
   });
   const [notification, setNotification] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -37,6 +34,7 @@ export default function CreateGamePage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
     const response = await fetch('/api/games', {
       method: 'POST',
       headers: {
@@ -44,13 +42,12 @@ export default function CreateGamePage() {
       },
       body: JSON.stringify(formData)
     });
+    setIsLoading(false);
     if (response.ok) {
       setFormData({
         title: '',
         description: '',
         image_logo: '',
-        image_thumbnail: '',
-        min_req: '',
         size: '',
         release_year: '',
         download_url: ''
@@ -66,7 +63,12 @@ export default function CreateGamePage() {
   };
 
   return (
-    <div className="flex flex-col items-center min-w-full p-6 bg-gray-900">
+    <div className="relative flex flex-col items-center min-w-full p-6 bg-gray-900">
+      {isLoading && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
+          <div className="w-16 h-16 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
+        </div>
+      )}
       <h1 className="mb-4 text-2xl font-semibold">Add Game</h1>
       {notification && (
         <div className="w-full max-w-lg p-4 mb-4 text-center text-white bg-green-500 rounded">
@@ -80,7 +82,7 @@ export default function CreateGamePage() {
       )}
       <form onSubmit={handleSubmit} className="w-full max-w-lg">
         <div className="flex flex-wrap mb-6 -mx-3">
-          {['title', 'description', 'image_logo', 'image_thumbnail', 'min_req', 'size', 'release_year', 'download_url'].map((field) => (
+          {['title', 'description', 'image_logo', 'size', 'release_year', 'download_url'].map((field) => (
             <div key={field} className="w-full px-3 mb-6 md:mb-0">
               <label className="block mb-2 text-xs font-bold tracking-wide text-gray-700 uppercase" htmlFor={field}>
                 {field.replace('_', ' ')}
@@ -106,6 +108,7 @@ export default function CreateGamePage() {
           <button
             className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
             type="submit"
+            disabled={isLoading}
           >
             Submit
           </button>

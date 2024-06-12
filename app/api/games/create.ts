@@ -14,8 +14,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       title,
       description,
       image_logo,
-      image_thumbnail,
-      min_req,
       size: parseInt(size, 10),
       release_year,
       download_url
